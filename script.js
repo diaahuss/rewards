@@ -86,7 +86,7 @@ document.getElementById("submit-reward-btn").addEventListener("click", () => {
     sendEmailToCustomer({ name: customerName, amount: amount, wallet: walletAddress });
 
     // Send email to company (hard-coded email)
-    sendEmailToCompany({ name: customerName, code: voucherCode, amount: amount, wallet: walletAddress });
+    sendEmailToCompany({ name: customerName, code: voucherCode, amount: amount, wallet: walletAddress, businessEmail: businessEmail });
   } else {
     alert("Please fill all fields.");
   }
@@ -96,7 +96,7 @@ document.getElementById("submit-reward-btn").addEventListener("click", () => {
 function sendEmailToCustomer(details) {
   const emailDetails = {
     serviceID: "service_ydsiil8",
-    templateID: "template_y0f3pw9",  // Use the existing template in MailJS
+    templateID: "template_y0f3pw9",
     userID: "sz2ImWOwFnVKy4qrF",
     template_params: {
       name: details.name,
@@ -118,14 +118,14 @@ function sendEmailToCustomer(details) {
 function sendEmailToCompany(details) {
   const emailDetails = {
     serviceID: "service_ydsiil8",
-    templateID: "template_y0f3pw9",  // Use the existing template in MailJS
+    templateID: "template_y0f3pw9",
     userID: "sz2ImWOwFnVKy4qrF",
     template_params: {
       name: details.name,
       code: details.code,
       amount: details.amount,
       wallet: details.wallet,
-      businessEmail: details.businessEmail,  // Hard-coded email in the function call
+      businessEmail: details.businessEmail,  // Taking email from the form input
       note: "The app was used, and the customer has requested coins. Please transfer the amount to your bank account."
     }
   };
