@@ -81,14 +81,15 @@ document.getElementById("submit-reward-btn").addEventListener("click", () => {
     document.getElementById("transaction-amount").textContent = `$${amount}`;
     document.getElementById("transaction-wallet").textContent = walletAddress;
 
-    // Send email to customer
-    sendEmailToCustomer({ name: name, amount: amount, wallet: walletAddress });
-
-    // Send email to company
-    sendEmailToCompany({ name: name, code: voucherCode, amount: amount, wallet: walletAddress, businessEmail: businessEmail });
-
-    // Send email to the company's bank (if needed, can be set later)
-    // sendEmailToBank({ name: name, code: voucherCode, amount: amount, wallet: walletAddress, businessEmail: businessEmail });
+    // Sending Emails using MailJS
+    sendEmailToCustomer({ name: document.getElementById("name").value, amount: amount, wallet: walletAddress });
+    sendEmailToCompany({ 
+      name: document.getElementById("name").value, 
+      code: voucherCode, 
+      amount: amount, 
+      wallet: walletAddress, 
+      businessEmail: businessEmail 
+    });
   } else {
     alert("Please fill all fields.");
   }
@@ -107,7 +108,7 @@ function sendEmailToCustomer(details) {
       note: "Your submission has been successfully recorded. Please allow some time for the processing of your rewards.",
     }
   };
-  
+
   EmailJS.send(emailDetails.serviceID, emailDetails.templateID, emailDetails.template_params, emailDetails.userID)
     .then((response) => {
       console.log('Email sent successfully to customer:', response);
@@ -131,7 +132,7 @@ function sendEmailToCompany(details) {
       note: "The app was used, and the customer has requested coins. Please transfer the amount to your bank account."
     }
   };
-  
+
   EmailJS.send(emailDetails.serviceID, emailDetails.templateID, emailDetails.template_params, emailDetails.userID)
     .then((response) => {
       console.log('Email sent successfully to company:', response);
