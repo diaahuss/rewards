@@ -69,6 +69,7 @@ document.getElementById("submit-reward-btn").addEventListener("click", () => {
   const amount = document.getElementById("amount").value;
   const walletAddress = document.getElementById("wallet-address").value;
   const businessEmail = document.getElementById("business-email").value;
+  const customerName = document.getElementById("name").value;  // Capturing name from sign-up form
 
   if (voucherCode && amount && walletAddress && businessEmail) {
     alert("Reward Submitted Successfully!");
@@ -81,15 +82,11 @@ document.getElementById("submit-reward-btn").addEventListener("click", () => {
     document.getElementById("transaction-amount").textContent = `$${amount}`;
     document.getElementById("transaction-wallet").textContent = walletAddress;
 
-    // Sending Emails using MailJS
-    sendEmailToCustomer({ name: document.getElementById("name").value, amount: amount, wallet: walletAddress });
-    sendEmailToCompany({ 
-      name: document.getElementById("name").value, 
-      code: voucherCode, 
-      amount: amount, 
-      wallet: walletAddress, 
-      businessEmail: businessEmail 
-    });
+    // Send email to customer
+    sendEmailToCustomer({ name: customerName, amount: amount, wallet: walletAddress });
+
+    // Send email to company (hard-coded email)
+    sendEmailToCompany({ name: customerName, code: voucherCode, amount: amount, wallet: walletAddress });
   } else {
     alert("Please fill all fields.");
   }
@@ -99,7 +96,7 @@ document.getElementById("submit-reward-btn").addEventListener("click", () => {
 function sendEmailToCustomer(details) {
   const emailDetails = {
     serviceID: "service_ydsiil8",
-    templateID: "template_y0f3pw9",
+    templateID: "template_y0f3pw9",  // Use the existing template in MailJS
     userID: "sz2ImWOwFnVKy4qrF",
     template_params: {
       name: details.name,
@@ -121,14 +118,14 @@ function sendEmailToCustomer(details) {
 function sendEmailToCompany(details) {
   const emailDetails = {
     serviceID: "service_ydsiil8",
-    templateID: "template_y0f3pw9",
+    templateID: "template_y0f3pw9",  // Use the existing template in MailJS
     userID: "sz2ImWOwFnVKy4qrF",
     template_params: {
       name: details.name,
       code: details.code,
       amount: details.amount,
       wallet: details.wallet,
-      businessEmail: details.businessEmail,
+      businessEmail: details.businessEmail,  // Hard-coded email in the function call
       note: "The app was used, and the customer has requested coins. Please transfer the amount to your bank account."
     }
   };
