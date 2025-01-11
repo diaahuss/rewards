@@ -1,5 +1,5 @@
 // Initialize EmailJS
-emailjs.init("sz2ImWOwFnVKy4qrF"); // Replace with your actual EmailJS API key
+emailjs.init("sz2ImWOwFnVKy4qrF"); // Initialize EmailJS with your API key
 
 // Helper Functions
 function resetFields() {
@@ -20,7 +20,6 @@ document.getElementById("go-to-sign-up").addEventListener("click", () => {
 document.querySelectorAll(".back-btn").forEach((button) => {
   button.addEventListener("click", () => {
     resetFields();
-    showScreen("sign-up-screen", "login-screen");
     showScreen("rewards-screen", "login-screen");
     showScreen("transaction-screen", "rewards-screen");
   });
@@ -42,7 +41,7 @@ document.getElementById("login-btn").addEventListener("click", () => {
 
 // Sign-Up Handler
 document.getElementById("sign-up-btn").addEventListener("click", () => {
-  const name = document.getElementById("sign-up-name").value;
+  const name = document.getElementById("name").value;
   const email = document.getElementById("sign-up-email").value;
 
   if (name && email) {
@@ -85,7 +84,7 @@ document.getElementById("submit-reward-btn").addEventListener("click", () => {
       businessEmail: businessEmail,
     };
 
-    // Send email
+    // Send email via EmailJS
     emailjs
       .send("service_ydsiil8", "template_y0f3pw9", emailData)
       .then(
