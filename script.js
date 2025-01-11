@@ -1,13 +1,9 @@
 // Initialize EmailJS
-emailjs.init("sz2ImWOwFnVKy4qrF");
+emailjs.init("YOUR_USER_ID"); // Replace with your EmailJS user ID
 
-// Variables to store user data
-let userName = "";
-let userEmail = "";
-
-// Reset fields function
+// Navigation Handlers
 function resetFields() {
-  document.querySelectorAll("input").forEach(input => (input.value = ""));
+  document.querySelectorAll("input").forEach((input) => (input.value = ""));
 }
 
 // Navigate to Sign-Up
@@ -17,101 +13,92 @@ document.getElementById("go-to-sign-up").addEventListener("click", () => {
   document.getElementById("sign-up-screen").classList.remove("hidden");
 });
 
-// Sign-Up Button Handler
+// Back Button Handlers
+document.querySelectorAll(".back-btn").forEach((button) => {
+  button.addEventListener("click", () => {
+    resetFields();
+    document.querySelectorAll(".screen").forEach((screen) => screen.classList.add("hidden"));
+    document.getElementById("login-screen").classList.remove("hidden");
+  });
+});
+
+// Sign-Up Handler
 document.getElementById("sign-up-btn").addEventListener("click", () => {
-  const name = document.getElementById("name").value.trim();
-  const email = document.getElementById("sign-up-email").value.trim();
-  const password = document.getElementById("sign-up-password").value.trim();
-  const confirmPassword = document.getElementById("confirm-password").value.trim();
+  const name = document.getElementById("sign-up-name").value;
+  const email = document.getElementById("sign-up-email").value;
 
-  if (name && email && password && confirmPassword && password === confirmPassword) {
+  if (name && email) {
     alert("Sign-Up Successful!");
-
-    // Save user data
-    userName = name;
-    userEmail = email;
+    document.getElementById("name-display").value = name;
+    document.getElementById("email-display").value = email;
 
     resetFields();
     document.getElementById("sign-up-screen").classList.add("hidden");
     document.getElementById("rewards-screen").classList.remove("hidden");
-
-    // Populate fields on the Rewards Screen
-    document.getElementById("name-display").value = userName;
-    document.getElementById("email-display").value = userEmail;
   } else {
-    alert("Please fill all fields and ensure passwords match.");
+    alert("Please fill in all fields.");
   }
 });
 
-// Login Button Handler
-document.getElementById("login-btn").addEventListener("click", () => {
-  const email = document.getElementById("login-email").value.trim();
-  const password = document.getElementById("login-password").value.trim();
-
-  if (email && password) {
-    alert("Login Successful!");
-
-    // Mock user data for simplicity
-    userName = "John Doe"; // Replace this with actual user retrieval logic.
-    userEmail = email;
-
-    resetFields();
-    document.getElementById("login-screen").classList.add("hidden");
-    document.getElementById("rewards-screen").classList.remove("hidden");
-
-    // Populate fields on the Rewards Screen
-    document.getElementById("name-display").value = userName;
-    document.getElementById("email-display").value = userEmail;
-  } else {
-    alert("Please enter both email and password.");
-  }
-});
-
-// Submit Reward Button Handler
+// Rewards Submission Handler
 document.getElementById("submit-reward-btn").addEventListener("click", () => {
-  const voucherCode = document.getElementById("voucher-code").value.trim();
-  const walletAddress = document.getElementById("wallet-address").value.trim();
-  const businessName = document.getElementById("business-name").value.trim();
-  const businessEmail = document.getElementById("business-email").value.trim();
+  const name = document.getElementById("name-display").value;
+  const email = document.getElementById("email-display").value;
+  const voucherCode = document.getElementById("voucher-code").value;
+  const walletAddress = document.getElementById("wallet-address").value;
+  const businessName = document.getElementById("business-name").value;
+  const businessEmail = document.getElementById("business-email").value;
 
-  if (voucherCode && walletAddress && businessName && businessEmail) {
-    // Populate Transaction Screen
-    document.getElementById("transaction-name").textContent = userName;
-    document.getElementById("transaction-email").textContent = userEmail;
+  if (name && email && voucherCode && walletAddress && businessName && businessEmail) {
+    // Update transaction details
+    document.getElementById("transaction-name").textContent = name;
+    document.getElementById("transaction-email").textContent = email;
     document.getElementById("transaction-voucher-code").textContent = voucherCode;
     document.getElementById("transaction-wallet").textContent = walletAddress;
     document.getElementById("transaction-business-name").textContent = businessName;
     document.getElementById("transaction-business-email").textContent = businessEmail;
 
-    // Send Email using EmailJS
-    emailjs.send("service_ydsiil8", "template_y0f3pw9", {
-      user_name: userName,
-      user_email: userEmail,
-      voucher_code: voucherCode,
-      wallet_address: walletAddress,
-      business_name: businessName,
-      business_email: businessEmail,
-      company_email: "diaahussein110@gmail.com"
-    }).then(() => {
-      alert("Reward submitted successfully and email sent!");
-    }).catch(err => {
-      console.error("Failed to send email:", err);
-      alert("Failed to send email. Please try again.");
-    });
+    // Send email
+    const emailData = {
+      customerName: name,
+      customerEmail: email,
+      voucherCode: voucherCode,
+      walletAddress: walletAddress,
+      businessName: businessName,
+      businessEmail: businessEmail,
+    };
 
+    emailjs.send("service_ydsiil8", "template_y0f3pw9", emailData).then(
+      (response) => {
+        console.log("SUCCESS!", response.status, response.text);
+        alert("Your reward submission has been sent successfully!");
+      },
+      (error) => {
+        console.error("FAILED...", error);
+        alert("Failed to send your reward submission. Please try again.");
+      }
+    );
+
+    // Navigate to Transaction Screen
     resetFields();
     document.getElementById("rewards-screen").classList.add("hidden");
     document.getElementById("transaction-screen").classList.remove("hidden");
   } else {
-    alert("Please fill all fields.");
+    alert("Please fill in all fields.");
   }
 });
 
-// Back Button Handlers
-document.querySelectorAll(".back-btn").forEach(button => {
-  button.addEventListener("click", () => {
+// Login Handler
+document.getElementById("login-btn").addEventListener("click", () => {
+  const email = document.getElementById("login-email").value;
+  const password = document.getElementById("login-password").value;
+
+  if (email && password) {
+    alert("Login Successful");
     resetFields();
-    document.querySelectorAll(".screen").forEach(screen => screen.classList.add("hidden"));
-    document.getElementById("login-screen").classList.remove("hidden");
-  });
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("rewards-screen").classList.remove("hidden");
+  } else {
+    alert("Please enter both email and password.");
+  }
 });
