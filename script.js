@@ -1,21 +1,16 @@
-// Voucher Code to Amount Mapping
-const vouchers = {
-  "CRYPTOZ50": 50,
-  "CRYPTOZ100": 100,
-};
-
-// Utility Function to Reset Fields
+// Navigation Handlers
 function resetFields() {
   document.querySelectorAll('input').forEach(input => (input.value = ""));
 }
 
-// Navigation Handlers
+// Navigate to Sign-Up
 document.getElementById("go-to-sign-up").addEventListener("click", () => {
   resetFields();
   document.getElementById("login-screen").classList.add("hidden");
   document.getElementById("sign-up-screen").classList.remove("hidden");
 });
 
+// Back Button Handlers
 document.querySelectorAll(".back-btn").forEach(button => {
   button.addEventListener("click", () => {
     resetFields();
@@ -31,6 +26,12 @@ document.getElementById("login-btn").addEventListener("click", () => {
 
   if (email && password) {
     alert("Login Successful");
+
+    // Mocking logged-in user data
+    const loggedInName = "John Doe"; // Replace with actual user data.
+    document.getElementById("name-display").value = loggedInName;
+    document.getElementById("email-display").value = email;
+
     resetFields();
     document.getElementById("login-screen").classList.add("hidden");
     document.getElementById("rewards-screen").classList.remove("hidden");
@@ -39,101 +40,69 @@ document.getElementById("login-btn").addEventListener("click", () => {
   }
 });
 
-// Sign-Up Button Handler
+// Sign-Up Handler
 document.getElementById("sign-up-btn").addEventListener("click", () => {
   const name = document.getElementById("name").value;
-  const email = document.getElementById("sign-up-email").value;
+  const signUpEmail = document.getElementById("sign-up-email").value;
   const password = document.getElementById("sign-up-password").value;
   const confirmPassword = document.getElementById("confirm-password").value;
 
-  if (name && email && password && password === confirmPassword) {
-    alert("Sign-Up Successful. Please log in.");
-    resetFields();
-    document.getElementById("sign-up-screen").classList.add("hidden");
-    document.getElementById("login-screen").classList.remove("hidden");
-  } else {
-    alert("Please fill all fields correctly and ensure passwords match.");
-  }
-});
+  if (name && signUpEmail && password && confirmPassword) {
+    if (password === confirmPassword) {
+      alert("Sign Up Successful");
 
-// Voucher Code Input Handler
-document.getElementById("voucher-code").addEventListener("input", () => {
-  const voucherCode = document.getElementById("voucher-code").value;
-  const amount = vouchers[voucherCode] || 0;
-  document.getElementById("amount").value = amount;
+      document.getElementById("name-display").value = name;
+      document.getElementById("email-display").value = signUpEmail;
+
+      resetFields();
+      document.getElementById("sign-up-screen").classList.add("hidden");
+      document.getElementById("login-screen").classList.remove("hidden");
+    } else {
+      alert("Passwords do not match.");
+    }
+  } else {
+    alert("Please fill all fields.");
+  }
 });
 
 // Rewards Submission Handler
 document.getElementById("submit-reward-btn").addEventListener("click", () => {
   const voucherCode = document.getElementById("voucher-code").value;
-  const amount = document.getElementById("amount").value;
   const walletAddress = document.getElementById("wallet-address").value;
+  const businessName = document.getElementById("business-name").value;
   const businessEmail = document.getElementById("business-email").value;
-  const customerName = document.getElementById("name").value;  // Capturing name from sign-up form
 
-  if (voucherCode && amount && walletAddress && businessEmail) {
+  const name = document.getElementById("name-display").value;
+  const email = document.getElementById("email-display").value;
+
+  if (voucherCode && walletAddress && businessName && businessEmail) {
     alert("Reward Submitted Successfully!");
     resetFields();
     document.getElementById("rewards-screen").classList.add("hidden");
     document.getElementById("transaction-screen").classList.remove("hidden");
 
     // Update transaction details
-    document.getElementById("transaction-date").textContent = new Date().toLocaleString();
-    document.getElementById("transaction-amount").textContent = `$${amount}`;
+    document.getElementById("transaction-name").textContent = name;
+    document.getElementById("transaction-email").textContent = email;
+    document.getElementById("transaction-voucher-code").textContent = voucherCode;
     document.getElementById("transaction-wallet").textContent = walletAddress;
+    document.getElementById("transaction-business-name").textContent = businessName;
+    document.getElementById("transaction-business-email").textContent = businessEmail;
 
-    // Send email to customer
-    sendEmailToCustomer({ name: customerName, amount: amount, wallet: walletAddress });
-
-    // Send email to company (hard-coded email)
-    sendEmailToCompany({ name: customerName, code: voucherCode, amount: amount, wallet: walletAddress, businessEmail: businessEmail });
+    // Sending email with MailJS
+    emailjs.send("service_ydsiil8", "template_y0f3pw9", {
+      name: name,
+      email: email,
+      voucherCode: voucherCode,
+      walletAddress: walletAddress,
+      businessName: businessName,
+      businessEmail: businessEmail
+    }, "user_sz2ImWOwFnVKy4qrF").then(() => {
+      alert("Email has been sent to diaahussein110@gmail.com.");
+    }, (error) => {
+      alert("Failed to send email.");
+    });
   } else {
     alert("Please fill all fields.");
   }
 });
-
-// Function to Send Email to Customer
-function sendEmailToCustomer(details) {
-  const emailDetails = {
-    serviceID: "service_ydsiil8",
-    templateID: "template_y0f3pw9",
-    userID: "sz2ImWOwFnVKy4qrF",
-    template_params: {
-      name: details.name,
-      amount: details.amount,
-      wallet: details.wallet,
-      note: "Your submission has been successfully recorded. Please allow some time for the processing of your rewards.",
-    }
-  };
-
-  EmailJS.send(emailDetails.serviceID, emailDetails.templateID, emailDetails.template_params, emailDetails.userID)
-    .then((response) => {
-      console.log('Email sent successfully to customer:', response);
-    }, (error) => {
-      console.error('Error sending email to customer:', error);
-    });
-}
-
-// Function to Send Email to Company
-function sendEmailToCompany(details) {
-  const emailDetails = {
-    serviceID: "service_ydsiil8",
-    templateID: "template_y0f3pw9",
-    userID: "sz2ImWOwFnVKy4qrF",
-    template_params: {
-      name: details.name,
-      code: details.code,
-      amount: details.amount,
-      wallet: details.wallet,
-      businessEmail: details.businessEmail,  // Taking email from the form input
-      note: "The app was used, and the customer has requested coins. Please transfer the amount to your bank account."
-    }
-  };
-
-  EmailJS.send(emailDetails.serviceID, emailDetails.templateID, emailDetails.template_params, emailDetails.userID)
-    .then((response) => {
-      console.log('Email sent successfully to company:', response);
-    }, (error) => {
-      console.error('Error sending email to company:', error);
-    });
-}
